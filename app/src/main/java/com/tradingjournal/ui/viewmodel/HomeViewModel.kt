@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tradingjournal.VoiceTradingApp
 import com.tradingjournal.model.Strategy
+import com.tradingjournal.model.Trade
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -13,12 +17,30 @@ class HomeViewModel : ViewModel() {
     
     private val repository = VoiceTradingApp.instance.repository
     
+    private val _selectedStrategyId = MutableStateFlow<Long?>(null)
+    val selectedStrategyId: StateFlow<Long?> = _selectedStrategyId.asStateFlow()
+
     val strategies: StateFlow<List<Strategy>> = repository.allStrategies
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+        
+    val allTrades: StateFlow<List<Trade>> = combine(
+        repository.allTrades,
+        _selectedStrategyId
+    ) { trades, strategyId ->
+        if (strategyId == null) trades else trades.filter { it.strategyId == strategyId }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+    
+    fun selectStrategy(id: Long?) {
+        _selectedStrategyId.value = id
+    }
     
     fun initializeDefaultStrategies() {
         viewModelScope.launch {

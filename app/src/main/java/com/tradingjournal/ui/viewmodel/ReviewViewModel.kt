@@ -7,6 +7,7 @@ import com.tradingjournal.data.remote.ApiService
 import com.tradingjournal.model.ParsedTrade
 import com.tradingjournal.model.SessionType
 import com.tradingjournal.model.Trade
+import com.tradingjournal.model.TradeResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,7 +57,10 @@ class ReviewViewModel : ViewModel() {
                             htfBias = response.htf_bias,
                             setup = response.setup,
                             confluences = response.confluences ?: emptyList(),
-                            summary = response.summary
+                            date = response.date,
+                            summary = response.summary,
+                            rrRatio = response.rr_ratio,
+                            result = response.result
                         )
                     )
                 },
@@ -75,8 +79,11 @@ class ReviewViewModel : ViewModel() {
         htfBias: String,
         setup: String,
         confluences: List<String>,
+        date: String,
         summary: String,
-        rawText: String
+        rawText: String,
+        rrRatio: Float? = null,
+        result: String = ""
     ) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSaving = true)
@@ -88,10 +95,17 @@ class ReviewViewModel : ViewModel() {
                 htfBias = htfBias,
                 setup = setup,
                 confluences = confluences,
+                date = if (date.isNotBlank()) date else java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date()),
                 summary = summary,
                 rawText = rawText,
                 sessionType = SessionType.LIVE,
-                timestamp = System.currentTimeMillis()
+                result = try { TradeResult.valueOf(result.uppercase()) } catch (e: Exception) { null },
+                rrRatio = rrRatio,
+                timestamp = try {
+                    java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).parse(date)?.time ?: System.currentTimeMillis()
+                } catch (e: Exception) {
+                    System.currentTimeMillis()
+                }
             )
             
             repository.insertTrade(trade)

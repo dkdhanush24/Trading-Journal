@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.tradingjournal.VoiceTradingApp
 import com.tradingjournal.model.Trade
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class JournalViewModel : ViewModel() {
@@ -62,5 +63,11 @@ class JournalViewModel : ViewModel() {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
+    }
+    
+    fun deleteTrade(trade: Trade) {
+        viewModelScope.launch {
+            repository.deleteTrade(trade)
+        }
     }
 }

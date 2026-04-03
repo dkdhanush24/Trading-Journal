@@ -13,7 +13,10 @@ CONVERSION RULES:
 3. htf_bias: Determine higher timeframe bias from context (Bullish, Bearish, Neutral)
 4. setup: Extract the specific setup type (Breakout, Pullback, MSS, FVG, OTE, ICT Killzone, etc.)
 5. confluences: Extract all supporting factors as an array (FVG, Order Blocks, Liquidity Sweeps, etc.)
-6. summary: Create a 1-2 sentence professional summary of the trade
+6. date: Extract the date mentioned (e.g. yesterday, Oct 16, 2025). Format as YYYY-MM-DD. Use null if not mentioned.
+7. summary: Create a 1-2 sentence professional summary of the trade
+8. rr_ratio: Extract the Risk to Reward ratio as a float (e.g. 2.5). Use null if not mentioned or cannot be parsed.
+9. result: Identify the final trade result as exactly "WIN", "LOSS", or "BE" (Breakeven). Use null if not mentioned.
 
 CRITICAL RULES:
 - Use ONLY the information provided. Do NOT assume or invent data.
@@ -22,8 +25,8 @@ CRITICAL RULES:
 - Output ONLY valid JSON, no markdown, no explanations, no apologies
 
 EXAMPLE:
-Input: "XAUUSD 5 min broke daily low, MSS plus FVG, expecting lower on 4H lower low"
-Output: {"pair":"XAUUSD","entry_timeframe":"5m","htf_bias":"Bearish","setup":"MSS","confluences":["FVG","Daily Low Break","Lower Low Structure"],"summary":"Bearish continuation setup on XAUUSD 5m with MSS and FVG confirmation after daily low break."}
+Input: "XAUUSD 5 min broke daily low, MSS plus FVG, expecting lower on 4H lower low on Oct 2nd 2024. Clear win with 1 to 2.5 risk reward."
+Output: {"pair":"XAUUSD","entry_timeframe":"5m","htf_bias":"Bearish","setup":"MSS","confluences":["FVG","Daily Low Break","Lower Low Structure"],"date":"2024-10-02","summary":"Bearish continuation setup on XAUUSD 5m with MSS and FVG confirmation.","rr_ratio":2.5,"result":"WIN"}
 
 """
 
@@ -80,6 +83,7 @@ def parse():
             'htf_bias': None,
             'setup': None,
             'confluences': [],
+            'date': None,
             'summary': text,
             'parse_error': 'Could not parse structured data from text'
         })

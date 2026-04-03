@@ -2,18 +2,23 @@ package com.tradingjournal.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val DarkBackground = Color(0xFF0D0D0D)
-val DarkSurface = Color(0xFF1A1A1A)
-val DarkCard = Color(0xFF252525)
+val DarkBackground = Color(0xFF0F172A)
+val DarkSurface = Color(0xFF1E293B)
+val DarkCard = Color(0xFF1E293B)
 
-val PrimaryGold = Color(0xFFFFD700)
-val PrimaryGoldDark = Color(0xFFB8860B)
+val PrimaryBlue = Color(0xFF3B82F6)
+val PrimaryBlueDark = Color(0xFF1D4ED8)
 
-val AccentGreen = Color(0xFF00E676)
-val AccentRed = Color(0xFFFF5252)
+val ProfitGreen = Color(0xFF10B981)
+val ProfitGreenLight = Color(0xFF047857)
 
-val TextPrimary = Color(0xFFFFFFFF)
-val TextSecondary = Color(0xFFB0B0B0)
-val TextMuted = Color(0xFF707070)
+val LossRed = Color(0xFFEF4444)
+val LossRedLight = Color(0xFFB91C1C)
 
-val GradientGold = listOf(Color(0xFFFFD700), Color(0xFFFFA500))
+val TextPrimary = Color(0xFFF8FAFC)
+val TextSecondary = Color(0xFF94A3B8)
+val TextMuted = Color(0xFF64748B)
+
+val CardBorder = Color(0xFF334155)
+
+val GradientPrimary = listOf(Color(0xFF3B82F6), Color(0xFF60A5FA))

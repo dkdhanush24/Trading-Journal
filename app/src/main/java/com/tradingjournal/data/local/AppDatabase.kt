@@ -9,7 +9,7 @@ import com.tradingjournal.model.Trade
 
 @Database(
     entities = [Strategy::class, Trade::class],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

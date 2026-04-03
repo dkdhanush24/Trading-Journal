@@ -27,10 +27,12 @@ data class Trade(
     val htfBias: String = "",
     val setup: String = "",
     val confluences: List<String> = emptyList(),
+    val date: String = "",
     val summary: String = "",
     val rawText: String = "",
     val sessionType: SessionType = SessionType.LIVE,
     val result: TradeResult? = null,
+    val rrRatio: Float? = null,
     val timestamp: Long = System.currentTimeMillis()
 )
 

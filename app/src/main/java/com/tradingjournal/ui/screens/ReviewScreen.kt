@@ -43,7 +43,10 @@ fun ReviewScreen(
     var htfBias by remember { mutableStateOf("") }
     var setup by remember { mutableStateOf("") }
     var confluencesText by remember { mutableStateOf("") }
+    var tradeDate by remember { mutableStateOf("") }
     var summary by remember { mutableStateOf("") }
+    var rrRatio by remember { mutableStateOf("") }
+    var result by remember { mutableStateOf("") }
     
     LaunchedEffect(uiState.parsedData) {
         uiState.parsedData?.let { data ->
@@ -52,7 +55,10 @@ fun ReviewScreen(
             htfBias = data.htfBias ?: ""
             setup = data.setup ?: ""
             confluencesText = data.confluences.joinToString(", ")
+            tradeDate = data.date ?: ""
             summary = data.summary ?: ""
+            rrRatio = data.rrRatio?.toString() ?: ""
+            result = data.result ?: ""
         }
     }
     
@@ -105,6 +111,12 @@ fun ReviewScreen(
                         onSetupChange = { setup = it },
                         confluencesText = confluencesText,
                         onConfluencesChange = { confluencesText = it },
+                        tradeDate = tradeDate,
+                        onTradeDateChange = { tradeDate = it },
+                        rrRatio = rrRatio,
+                        onRrRatioChange = { rrRatio = it },
+                        result = result,
+                        onResultChange = { result = it },
                         summary = summary,
                         onSummaryChange = { summary = it }
                     )
@@ -120,8 +132,11 @@ fun ReviewScreen(
                                 htfBias = htfBias,
                                 setup = setup,
                                 confluences = confluencesText.split(",").map { it.trim() }.filter { it.isNotEmpty() },
+                                date = tradeDate,
                                 summary = summary,
-                                rawText = rawText
+                                rawText = rawText,
+                                rrRatio = rrRatio.toFloatOrNull(),
+                                result = result
                             )
                         }
                     )
@@ -142,7 +157,7 @@ fun RawTextCard(rawText: String) {
                 Icon(
                     Icons.Default.TextFields,
                     contentDescription = null,
-                    tint = PrimaryGold,
+                    tint = PrimaryBlue,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -174,6 +189,12 @@ fun EditableFields(
     onSetupChange: (String) -> Unit,
     confluencesText: String,
     onConfluencesChange: (String) -> Unit,
+    tradeDate: String,
+    onTradeDateChange: (String) -> Unit,
+    rrRatio: String,
+    onRrRatioChange: (String) -> Unit,
+    result: String,
+    onResultChange: (String) -> Unit,
     summary: String,
     onSummaryChange: (String) -> Unit
 ) {
@@ -189,7 +210,7 @@ fun EditableFields(
                 "Trade Details",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = PrimaryGold
+                color = PrimaryBlue
             )
             
             OutlinedTextField(
@@ -203,7 +224,7 @@ fun EditableFields(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryGold,
+                    focusedBorderColor = PrimaryBlue,
                     unfocusedBorderColor = TextMuted
                 )
             )
@@ -219,7 +240,7 @@ fun EditableFields(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryGold,
+                    focusedBorderColor = PrimaryBlue,
                     unfocusedBorderColor = TextMuted
                 )
             )
@@ -235,7 +256,7 @@ fun EditableFields(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryGold,
+                    focusedBorderColor = PrimaryBlue,
                     unfocusedBorderColor = TextMuted
                 )
             )
@@ -251,7 +272,7 @@ fun EditableFields(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryGold,
+                    focusedBorderColor = PrimaryBlue,
                     unfocusedBorderColor = TextMuted
                 )
             )
@@ -267,10 +288,53 @@ fun EditableFields(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryGold,
+                    focusedBorderColor = PrimaryBlue,
                     unfocusedBorderColor = TextMuted
                 )
             )
+            
+            OutlinedTextField(
+                value = tradeDate,
+                onValueChange = onTradeDateChange,
+                label = { Text("Trade Date") },
+                placeholder = { Text("YYYY-MM-DD (Default: Today)") },
+                leadingIcon = {
+                    Icon(Icons.Default.CalendarToday, contentDescription = null)
+                },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue,
+                    unfocusedBorderColor = TextMuted
+                )
+            )
+            
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                OutlinedTextField(
+                    value = rrRatio,
+                    onValueChange = onRrRatioChange,
+                    label = { Text("RR Ratio") },
+                    placeholder = { Text("e.g. 2.5") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PrimaryBlue,
+                        unfocusedBorderColor = TextMuted
+                    )
+                )
+                OutlinedTextField(
+                    value = result,
+                    onValueChange = onResultChange,
+                    label = { Text("Result") },
+                    placeholder = { Text("WIN/LOSS/BE") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PrimaryBlue,
+                        unfocusedBorderColor = TextMuted
+                    )
+                )
+            }
             
             OutlinedTextField(
                 value = summary,
@@ -281,7 +345,7 @@ fun EditableFields(
                 maxLines = 4,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryGold,
+                    focusedBorderColor = PrimaryBlue,
                     unfocusedBorderColor = TextMuted
                 )
             )
@@ -297,7 +361,7 @@ fun ProcessingState() {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator(
-                color = PrimaryGold,
+                color = PrimaryBlue,
                 modifier = Modifier.size(48.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -330,7 +394,7 @@ fun ErrorState(
                 Icons.Default.Error,
                 contentDescription = null,
                 modifier = Modifier.size(64.dp),
-                tint = AccentRed
+                tint = LossRed
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -347,7 +411,7 @@ fun ErrorState(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = onRetry,
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGold)
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
             ) {
                 Text("Retry")
             }
@@ -368,8 +432,8 @@ fun SaveButton(
             .height(56.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = PrimaryGold,
-            disabledContainerColor = PrimaryGold.copy(alpha = 0.3f)
+            containerColor = PrimaryBlue,
+            disabledContainerColor = PrimaryBlue.copy(alpha = 0.3f)
         )
     ) {
         Icon(Icons.Default.Save, contentDescription = null)

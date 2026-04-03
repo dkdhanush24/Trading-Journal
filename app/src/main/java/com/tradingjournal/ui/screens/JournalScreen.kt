@@ -86,7 +86,8 @@ fun JournalScreen(
                         FlashCard(
                             trade = trade,
                             index = index,
-                            total = trades.size
+                            total = trades.size,
+                            onDelete = { viewModel.deleteTrade(it) }
                         )
                     }
                 }
@@ -132,7 +133,7 @@ fun DateSelector(
                 Icon(
                     Icons.Default.ChevronLeft,
                     contentDescription = "Previous day",
-                    tint = PrimaryGold
+                    tint = PrimaryBlue
                 )
             }
             
@@ -173,7 +174,7 @@ fun DateSelector(
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = "Next day",
-                    tint = if (selectedDate < System.currentTimeMillis()) PrimaryGold else TextMuted
+                    tint = if (selectedDate < System.currentTimeMillis()) PrimaryBlue else TextMuted
                 )
             }
         }
@@ -201,7 +202,7 @@ fun DatePickerDialog(
                     }
                 }
             ) {
-                Text("OK", color = PrimaryGold)
+                Text("OK", color = PrimaryBlue)
             }
         },
         dismissButton = {
@@ -213,10 +214,10 @@ fun DatePickerDialog(
         DatePicker(
             state = datePickerState,
             colors = DatePickerDefaults.colors(
-                selectedDayContainerColor = PrimaryGold,
+                selectedDayContainerColor = PrimaryBlue,
                 selectedDayContentColor = DarkBackground,
-                todayContentColor = PrimaryGold,
-                todayDateBorderColor = PrimaryGold
+                todayContentColor = PrimaryBlue,
+                todayDateBorderColor = PrimaryBlue
             )
         )
     }

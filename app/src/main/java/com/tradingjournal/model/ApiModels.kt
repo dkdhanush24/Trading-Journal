@@ -6,7 +6,10 @@ data class ParsedTrade(
     val htfBias: String?,
     val setup: String?,
     val confluences: List<String>,
-    val summary: String?
+    val date: String?,
+    val summary: String?,
+    val rrRatio: Float? = null,
+    val result: String? = null
 )
 
 data class TranscriptionResult(
@@ -20,6 +23,9 @@ data class ParseResult(
     val htfBias: String?,
     val setup: String?,
     val confluences: List<String>,
+    val date: String?,
     val summary: String?,
+    val rr_ratio: Float? = null,
+    val result: String? = null,
     val error: String? = null
 )

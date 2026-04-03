@@ -12,7 +12,7 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class ApiService(private val baseUrl: String = "http://10.0.2.2:5000") {
+class ApiService(private val baseUrl: String = "http://10.222.161.234:5000") {
     
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -102,6 +102,9 @@ data class ParseResponse(
     val htf_bias: String?,
     val setup: String?,
     val confluences: List<String>?,
+    val date: String?,
     val summary: String?,
+    val rr_ratio: Float? = null,
+    val result: String? = null,
     val error: String? = null
 )

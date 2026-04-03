@@ -4,7 +4,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -27,7 +29,8 @@ import java.util.*
 fun FlashCard(
     trade: Trade,
     index: Int,
-    total: Int
+    total: Int,
+    onDelete: (Trade) -> Unit
 ) {
     var isFlipped by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(
@@ -62,7 +65,8 @@ fun FlashCard(
             CardBack(
                 trade = trade,
                 formattedTime = formattedTime,
-                modifier = Modifier.graphicsLayer { rotationY = 180f }
+                modifier = Modifier.graphicsLayer { rotationY = 180f },
+                onDelete = { onDelete(trade) }
             )
         }
     }
@@ -84,6 +88,7 @@ fun CardFront(
                 )
             )
             .clip(RoundedCornerShape(20.dp))
+            .verticalScroll(rememberScrollState())
     ) {
         Column(
             modifier = Modifier
@@ -100,18 +105,18 @@ fun CardFront(
                         text = trade.pair.ifEmpty { "—" },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = PrimaryGold
+                        color = PrimaryBlue
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     if (trade.entryTimeframe.isNotEmpty()) {
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = PrimaryGold.copy(alpha = 0.2f)
+                            color = PrimaryBlue.copy(alpha = 0.2f)
                         ) {
                             Text(
                                 text = trade.entryTimeframe,
                                 style = MaterialTheme.typography.labelMedium,
-                                color = PrimaryGold,
+                                color = PrimaryBlue,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                             )
                         }
@@ -199,31 +204,47 @@ fun CardFront(
 fun CardBack(
     trade: Trade,
     formattedTime: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(
                 Brush.linearGradient(
-                    colors = listOf(PrimaryGoldDark, PrimaryGold.copy(alpha = 0.8f))
+                    colors = listOf(PrimaryBlueDark, PrimaryBlue.copy(alpha = 0.8f))
                 )
             )
             .clip(RoundedCornerShape(20.dp))
+            .verticalScroll(rememberScrollState())
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            Text(
-                "Trade Details",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = DarkBackground
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Trade Details",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+                
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Delete trade",
+                        tint = TextPrimary
+                    )
+                }
+            }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             DetailRow(
                 icon = Icons.Default.TrendingUp,
@@ -252,12 +273,12 @@ fun CardBack(
                 Text(
                     text = "Summary",
                     style = MaterialTheme.typography.labelMedium,
-                    color = DarkBackground.copy(alpha = 0.7f)
+                    color = TextPrimary.copy(alpha = 0.7f)
                 )
                 Text(
                     text = trade.summary,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = DarkBackground,
+                    color = TextPrimary,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -269,7 +290,7 @@ fun CardBack(
                 Text(
                     text = "Raw: ${trade.rawText}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = DarkBackground.copy(alpha = 0.7f),
+                    color = TextPrimary.copy(alpha = 0.7f),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -294,20 +315,20 @@ fun DetailRow(
             icon,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = DarkBackground
+            tint = TextPrimary
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = DarkBackground.copy(alpha = 0.7f)
+                color = TextPrimary.copy(alpha = 0.7f)
             )
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = DarkBackground,
+                color = TextPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

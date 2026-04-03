@@ -25,7 +25,9 @@ class VoiceTradingApp : Application() {
             applicationContext,
             AppDatabase::class.java,
             "voice_trading_journal"
-        ).build()
+        )
+        .fallbackToDestructiveMigration()
+        .build()
         
         repository = TradeRepository(
             strategyDao = database.strategyDao(),

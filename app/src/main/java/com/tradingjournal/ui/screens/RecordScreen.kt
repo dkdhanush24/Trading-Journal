@@ -131,11 +131,11 @@ fun RecordScreen(
                         .background(
                             if (isRecording) {
                                 Brush.radialGradient(
-                                    colors = listOf(AccentRed, AccentRed.copy(alpha = 0.3f))
+                                    colors = listOf(LossRed, LossRed.copy(alpha = 0.3f))
                                 )
                             } else {
                                 Brush.radialGradient(
-                                    colors = listOf(PrimaryGold, PrimaryGoldDark)
+                                    colors = listOf(PrimaryBlue, PrimaryBlueDark)
                                 )
                             }
                         ),
@@ -203,7 +203,7 @@ fun RecordScreen(
                     Text(
                         text = formatTime(recordingTime),
                         style = MaterialTheme.typography.displayMedium,
-                        color = AccentRed,
+                        color = LossRed,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -213,7 +213,7 @@ fun RecordScreen(
                 Text(
                     text = statusText,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = if (isRecording) PrimaryGold else TextSecondary,
+                    color = if (isRecording) PrimaryBlue else TextSecondary,
                     textAlign = TextAlign.Center
                 )
                 
@@ -253,7 +253,7 @@ fun TipRow(text: String) {
             Icons.Default.Check,
             contentDescription = null,
             modifier = Modifier.size(16.dp),
-            tint = PrimaryGold
+            tint = PrimaryBlue
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -291,7 +291,7 @@ fun PermissionRequired(onRequestPermission: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = onRequestPermission,
-            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGold)
+            colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
         ) {
             Text("Grant Permission")
         }
