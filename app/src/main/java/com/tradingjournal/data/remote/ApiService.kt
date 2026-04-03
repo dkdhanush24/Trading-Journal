@@ -12,7 +12,7 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class ApiService(private val baseUrl: String = "http://10.222.161.234:5000") {
+class ApiService(private val baseUrl: String = "https://trading-journal-backend-production-d66c.up.railway.app") {
     
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
