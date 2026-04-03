@@ -1,6 +1,7 @@
 package com.tradingjournal.model
 
 data class ParsedTrade(
+    val pair: String? = null,
     val entryTimeframe: String?,
     val htfBias: String?,
     val setup: String?,
@@ -14,6 +15,7 @@ data class TranscriptionResult(
 )
 
 data class ParseResult(
+    val pair: String? = null,
     val entryTimeframe: String?,
     val htfBias: String?,
     val setup: String?,

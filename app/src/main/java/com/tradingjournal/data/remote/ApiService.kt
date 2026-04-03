@@ -97,6 +97,7 @@ data class TranscribeResponse(
 )
 
 data class ParseResponse(
+    val pair: String? = null,
     val entry_timeframe: String?,
     val htf_bias: String?,
     val setup: String?,

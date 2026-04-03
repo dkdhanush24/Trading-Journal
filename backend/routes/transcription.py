@@ -30,18 +30,21 @@ def transcribe():
         
         client = Groq(api_key=api_key)
         
-        audio_file = file.read()
+        audio_bytes = file.read()
         file_name = secure_filename(file.filename) or 'audio.m4a'
         
         transcription = client.audio.transcriptions.create(
-            file=(file_name, audio_file),
+            file=(file_name, audio_bytes),
             model='whisper-large-v3',
             response_format='text',
             language='en'
         )
         
+        # response_format='text' returns a string directly
+        text = transcription if isinstance(transcription, str) else transcription.text
+        
         return jsonify({
-            'text': transcription
+            'text': text
         })
         
     except Exception as e:

@@ -1,17 +1,19 @@
 from flask import Blueprint, request, jsonify
 from groq import Groq
 import os
+import json
 
 parse_bp = Blueprint('parse', __name__)
 
 SYSTEM_PROMPT = """You are a trading journal parser. Convert spoken or written trade descriptions into STRICT JSON format.
 
 CONVERSION RULES:
-1. entry_timeframe: Extract the timeframe entered (5m, 15m, 1h, 4h, Daily, etc.)
-2. htf_bias: Determine higher timeframe bias from context (Bullish, Bearish, Neutral)
-3. setup: Extract the specific setup type (Breakout, Pullback, MSS, FVG, OTE, ICT Killzone, etc.)
-4. confluences: Extract all supporting factors (FVG, Order Blocks, Liquidity Sweeps, etc.)
-5. summary: Create a 1-2 sentence professional summary of the trade
+1. pair: Extract the trading pair/instrument (XAUUSD, EURUSD, NAS100, etc.) — use null if not mentioned
+2. entry_timeframe: Extract the timeframe entered (5m, 15m, 1h, 4h, Daily, etc.)
+3. htf_bias: Determine higher timeframe bias from context (Bullish, Bearish, Neutral)
+4. setup: Extract the specific setup type (Breakout, Pullback, MSS, FVG, OTE, ICT Killzone, etc.)
+5. confluences: Extract all supporting factors as an array (FVG, Order Blocks, Liquidity Sweeps, etc.)
+6. summary: Create a 1-2 sentence professional summary of the trade
 
 CRITICAL RULES:
 - Use ONLY the information provided. Do NOT assume or invent data.
@@ -20,8 +22,8 @@ CRITICAL RULES:
 - Output ONLY valid JSON, no markdown, no explanations, no apologies
 
 EXAMPLE:
-Input: "5 min broke daily low, MSS plus FVG, expecting lower on 4H lower low"
-Output: {"entry_timeframe":"5m","htf_bias":"Bearish","setup":"MSS","confluences":["FVG","Daily Low Break","Lower Low Structure"],"summary":"Bearish continuation setup on 5m with MSS and FVG confirmation."}
+Input: "XAUUSD 5 min broke daily low, MSS plus FVG, expecting lower on 4H lower low"
+Output: {"pair":"XAUUSD","entry_timeframe":"5m","htf_bias":"Bearish","setup":"MSS","confluences":["FVG","Daily Low Break","Lower Low Structure"],"summary":"Bearish continuation setup on XAUUSD 5m with MSS and FVG confirmation after daily low break."}
 
 """
 
@@ -44,20 +46,23 @@ def parse():
         
         client = Groq(api_key=api_key)
         
-        response = client.chat.completions.create(
-            model='llama-3.3-70b-versatile',
+        completion = client.chat.completions.create(
+            model='openai/gpt-oss-120b',
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": text}
             ],
-            temperature=0.1,
-            max_tokens=500
+            temperature=1,
+            max_completion_tokens=512,
+            top_p=1,
+            reasoning_effort="medium",
+            stream=False,
+            stop=None
         )
         
-        result_text = response.choices[0].message.content.strip()
+        result_text = completion.choices[0].message.content.strip()
         
-        import json
-        result_text = result_text.strip()
+        # Strip markdown code fences if present
         if result_text.startswith('```json'):
             result_text = result_text[7:]
         if result_text.startswith('```'):
@@ -70,8 +75,9 @@ def parse():
         
         return jsonify(parsed)
         
-    except json.JSONDecodeError as e:
+    except json.JSONDecodeError:
         return jsonify({
+            'pair': None,
             'entry_timeframe': None,
             'htf_bias': None,
             'setup': None,

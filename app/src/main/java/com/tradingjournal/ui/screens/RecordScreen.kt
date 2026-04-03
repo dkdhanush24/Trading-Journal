@@ -167,7 +167,7 @@ fun RecordScreen(
                                         MediaRecorder(context)
                                     } else {
                                         @Suppress("DEPRECATION")
-                                        MediaRecorder()
+                                        android.media.MediaRecorder()
                                     }.apply {
                                         setAudioSource(MediaRecorder.AudioSource.MIC)
                                         setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)

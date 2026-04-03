@@ -51,6 +51,7 @@ class ReviewViewModel : ViewModel() {
                 onSuccess = { response ->
                     _uiState.value = ReviewUiState(
                         parsedData = ParsedTrade(
+                            pair = response.pair,
                             entryTimeframe = response.entry_timeframe,
                             htfBias = response.htf_bias,
                             setup = response.setup,

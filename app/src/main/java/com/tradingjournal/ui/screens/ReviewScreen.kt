@@ -47,6 +47,7 @@ fun ReviewScreen(
     
     LaunchedEffect(uiState.parsedData) {
         uiState.parsedData?.let { data ->
+            pair = data.pair ?: ""
             entryTimeframe = data.entryTimeframe ?: ""
             htfBias = data.htfBias ?: ""
             setup = data.setup ?: ""
