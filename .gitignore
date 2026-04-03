@@ -1,0 +1,79 @@
+# Environment variables (NEVER commit API keys)
+.env
+.env.local
+.env.*.local
+
+# Gradle (keep source build files, ignore cache/outputs)
+.gradle/
+build/
+app/build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+output.json
+
+# Build outputs
+/app/build/
+/app/app/build/
+*.dex
+*.class
+*.jar
+
+# Generated files
+gen/
+.gradle/
+
+# Keystore (sensitive)
+*.jks
+*.keystore
+
+# Python / Flask
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Audio files (recorded trades)
+*.m4a
+*.wav
+*.mp3
+*.ogg
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Backend files
+*.db
+*.sqlite
+
+# Node (if used)
+node_modules/
+npm-debug.log
+
+# Secrets
+credentials.json
+secrets.json
+*.pem
+*.key
