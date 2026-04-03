@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.tradingjournal.ui.theme.*
+import com.tradingjournal.ui.viewmodel.RecordViewModel
 import kotlinx.coroutines.delay
 import java.io.File
 

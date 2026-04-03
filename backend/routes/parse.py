@@ -47,15 +47,13 @@ def parse():
         client = Groq(api_key=api_key)
         
         completion = client.chat.completions.create(
-            model='openai/gpt-oss-120b',
+            model='llama-3.3-70b-versatile',
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": text}
             ],
-            temperature=1,
-            max_completion_tokens=512,
-            top_p=1,
-            reasoning_effort="medium",
+            temperature=0.1,
+            max_tokens=512,
             stream=False,
             stop=None
         )

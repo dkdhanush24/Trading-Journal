@@ -225,6 +225,7 @@ fun EmptyState(onAddStrategy: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddStrategyDialog(
     onDismiss: () -> Unit,
