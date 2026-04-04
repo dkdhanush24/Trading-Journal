@@ -1,112 +1,149 @@
 # Voice Trading Journal
 
-A personal trading journal app that lets you speak your trade reasoning naturally and converts it into structured data.
+> Speak your trade reasoning. AI structures it. Review it as flashcards.
 
-## Features
+A personal Android app built to eliminate the friction of logging trades manually. Record your analysis by voice, let Whisper transcribe it and Llama 3 extract the structure, then review past trades as flashcard-style journal entries.
 
-- **Voice Recording** - Tap mic, speak naturally, done
-- **AI Parsing** - Whisper + Llama extract trade details automatically
-- **Review & Edit** - Always editable before saving
-- **Flashcard Journal** - Tap to flip between summary and details
-- **Date Navigation** - Browse your trading history by day
+Built for personal use — because typing out trade notes after every session is tedious and I actually needed this.
+
+---
+
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/6a941b6f-649a-4a1d-a08f-30321795d3b6" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/e4fb0072-bafe-45da-97b8-d2b827a47ef6" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/0c4a640f-01bb-4424-acd0-a3a28d69d7cf" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/8a30961b-d4af-467a-b0d1-910c81fd0ed7" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center">Home</td>
+    <td align="center">Voice Recording</td>
+    <td align="center">Parsed Result</td>
+    <td align="center">Journal Flashcard</td>
+  </tr>
+</table>
+
+---
+
+## How It Works
+
+```
+Tap mic → Speak trade reasoning
+        ↓
+Groq Whisper transcribes audio → plain text
+        ↓
+Llama 3 70B extracts structured trade data → JSON
+        ↓
+Saved locally as flashcard journal entry
+        ↓
+Review past trades anytime
+```
+
+---
+
+## What Gets Extracted
+
+From a single voice note, Llama 3 pulls out:
+
+- **Timeframe** — what timeframe the setup was on
+- **High Timeframe Bias** — directional bias (bullish/bearish)
+- **Setup Elements** — order blocks, FVGs, liquidity levels etc.
+- **Confluences** — supporting factors for the trade
+- **Full Transcription** — raw text always saved alongside structured data
+
+---
+
+## Tech Stack
+
+### Android App
+- **Language** — Kotlin
+- **UI** — Jetpack Compose (Material 3)
+- **Architecture** — MVVM (ViewModel + Coroutines)
+- **Local Storage** — Room Database (SQLite)
+- **Networking** — OkHttp + Gson
+- **Target SDK** — Android API Level 35
+
+### Backend
+- **Framework** — Python Flask
+- **Transcription** — Groq Whisper
+- **Parsing** — Groq Llama 3 70B (structured JSON extraction)
+- **CORS** — flask-cors
+
+---
 
 ## Project Structure
 
 ```
 voice-trading-journal/
-├── backend/                    # Flask API
-│   ├── app.py                 # Main Flask app
-│   ├── routes/
-│   │   ├── transcription.py   # POST /api/transcribe
-│   │   └── parse.py           # POST /api/parse
-│   └── requirements.txt
+├── app/                        # Android application (Kotlin)
+│   └── src/main/java/
+│       ├── model/              # Trade, Strategy, API models
+│       ├── data/               # Room DB, DAOs, Repository, ApiService
+│       └── ui/
+│           ├── screens/        # HomeScreen, RecordScreen, JournalScreen, ReviewScreen
+│           ├── components/     # FlashCard component
+│           └── viewmodel/      # ViewModels per screen
 │
-├── app/                       # Android app (Kotlin)
-│   ├── app/
-│   │   └── src/main/
-│   │       ├── java/com/tradingjournal/
-│   │       │   ├── model/        # Data models
-│   │       │   ├── data/         # Room DB, API service
-│   │       │   └── ui/           # Compose screens
-│   │       └── res/
-│   └── build.gradle.kts
-│
-└── README.md
+└── backend/                    # Python Flask API
+    ├── app.py                  # Main Flask app
+    └── .env                    # GROQ_API_KEY (not committed)
 ```
 
-## Setup Instructions
-
-### 1. Backend Setup
-
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure API key
-cp .env.example .env
-# Edit .env and add your GROQ_API_KEY from https://console.groq.com
-
-# Run server
-flask run --host=0.0.0.0 --port=5000
-```
-
-### 2. Android App Setup
-
-1. Open the `app/` folder in Android Studio
-2. Wait for Gradle sync to complete
-3. Set your Android SDK path in `local.properties`
-4. Build and run on device/emulator
-
-**API URL Configuration:**
-- For emulator: `http://10.0.2.2:5000` (built into Android)
-- For physical device: Use your computer's local IP address
+---
 
 ## API Endpoints
 
-### POST /api/transcribe
-Upload audio for transcription.
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/transcribe` | POST | Upload audio → returns transcription text |
+| `/api/parse` | POST | Send transcription → returns structured JSON |
+| `/api/health` | GET | Health check |
 
+---
+
+## Setup
+
+### Backend
 ```bash
-curl -X POST http://localhost:5000/api/transcribe \
-  -F "file=@recording.m4a"
+cd backend
+pip install -r requirements.txt
+
+# Create .env file
+echo "GROQ_API_KEY=your_key_here" > .env
+
+python app.py
 ```
 
-### POST /api/parse
-Parse trading text into structured JSON.
+### Android App
+- Open `app/` in Android Studio
+- Update backend URL in `ApiService.kt`
+  - Emulator: `http://10.0.2.2:5000`
+  - Physical device: `http://your-local-ip:5000`
+- Build and run
 
-```bash
-curl -X POST http://localhost:5000/api/parse \
-  -H "Content-Type: application/json" \
-  -d '{"text": "5 min MSS with FVG on 4H lower low"}'
-```
+---
 
-### GET /api/health
-Health check endpoint.
+## Why I Built This
 
-## Tech Stack
+I trade XAUUSD and keeping a proper journal is critical for improving. But typing detailed notes after every trade — bias, setup, confluences, reasoning — is slow enough that I'd skip it.
 
-| Layer | Technology |
-|-------|------------|
-| Mobile | Kotlin + Jetpack Compose |
-| Backend | Flask (Python) |
-| Speech-to-Text | Groq Whisper API |
-| LLM Parsing | Groq Llama 3.3 70B |
-| Database | Room (SQLite) |
-| API Client | OkHttp + Gson |
+This app lets me just talk. The AI handles the structure. I handle the trading.
 
-## Future Enhancements
+---
 
-- Pattern detection across trades
-- Trade frequency tracking
-- CSV export
-- Cloud sync
+## Status
 
-## License
+| Feature | Status |
+|---|---|
+| Voice recording + transcription | ✅ Complete |
+| Llama 3 structured extraction | ✅ Complete |
+| Flashcard journal view | ✅ Complete |
+| Local Room DB persistence | ✅ Complete |
 
-Personal use only.
+
+---
+
+**Author: Dhanush S**
+*Personal project — built to solve a real problem.*
